@@ -68,6 +68,10 @@ npm run build
 
 5. 重新啟動 VS Code 或 Claude Desktop 以使設置生效。
 
+## How install Rundeck CLI
+
+- https://docs.rundeck.com/docs/rd-cli/install.html
+
 ## 使用方法
 
 一旦配置完成，您可以使用以下方式調用 MCP 工具：
