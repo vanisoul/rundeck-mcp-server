@@ -1,0 +1,26 @@
+{
+    "name": "rundeck-mcp-server",
+    "version": "1.0.0",
+    "description": "MCP Server for Rundeck CLI",
+    "type": "module",
+    "main": "build/index.js",
+    "scripts": {
+        "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+        "start": "node build/index.js",
+        "dev": "tsc -w"
+    },
+    "keywords": [
+        "rundeck",
+        "mcp",
+        "cli"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "latest"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0"
+    }
+}
