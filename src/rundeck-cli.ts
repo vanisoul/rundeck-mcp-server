@@ -90,11 +90,7 @@ export class RundeckCli {
 	 * @returns 執行結果
 	 */
 	async getJobInfo(id: string, format = "json"): Promise<ExecutionResult> {
-		const args = ["jobs", "info", id];
-
-		if (format && format !== "json") {
-			args.push("-f", format);
-		}
+		const args = ["jobs", "info", "-i", id];
 
 		return this.execute(args);
 	}
@@ -111,16 +107,15 @@ export class RundeckCli {
 		options?: Record<string, string>,
 		follow = false,
 	): Promise<ExecutionResult> {
-		const args = ["jobs", "run", id];
+		const args = ["run", "-i", id];
+
+		// 添加分隔符
+		args.push("--");
 
 		if (options) {
 			for (const [key, value] of Object.entries(options)) {
-				args.push("-O", `${key}=${value}`);
+				args.push(`-${key}`, value);
 			}
-		}
-
-		if (follow) {
-			args.push("--follow");
 		}
 
 		return this.execute(args);
