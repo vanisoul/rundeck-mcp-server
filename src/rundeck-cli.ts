@@ -86,10 +86,9 @@ export class RundeckCli {
 	/**
 	 * 獲取作業信息
 	 * @param id 作業 ID
-	 * @param format 輸出格式
 	 * @returns 執行結果
 	 */
-	async getJobInfo(id: string, format = "json"): Promise<ExecutionResult> {
+	async getJobInfo(id: string): Promise<ExecutionResult> {
 		const args = ["jobs", "info", "-i", id];
 
 		return this.execute(args);
@@ -109,6 +108,10 @@ export class RundeckCli {
 	): Promise<ExecutionResult> {
 		const args = ["run", "-i", id];
 
+		if (follow) {
+			args.push("-f");
+		}
+
 		// 添加分隔符
 		args.push("--");
 
@@ -121,40 +124,19 @@ export class RundeckCli {
 		return this.execute(args);
 	}
 
-	/**
-	 * 獲取作業調度預測
-	 * @param id 作業 ID
-	 * @returns 執行結果
-	 */
-	async getJobForecast(id: string): Promise<ExecutionResult> {
-		return this.execute(["jobs", "forecast", id]);
-	}
-
 	// 執行相關方法
 
 	/**
 	 * 列出項目中的執行
 	 * @param project 項目名稱
-	 * @param status 執行狀態
 	 * @param max 最大結果數
 	 * @returns 執行結果
 	 */
-	async listExecutions(
-		project: string,
-		status?: string,
-		max = 20,
-	): Promise<ExecutionResult> {
-		const args = [
-			"executions",
-			"query",
-			"--project",
-			project,
-			"--max",
-			max.toString(),
-		];
+	async listExecutions(project: string, max = 20): Promise<ExecutionResult> {
+		const args = ["executions", "list", "-p", project];
 
-		if (status) {
-			args.push("--status", status);
+		if (max) {
+			args.push("-m", max.toString());
 		}
 
 		return this.execute(args);
@@ -166,41 +148,17 @@ export class RundeckCli {
 	 * @returns 執行結果
 	 */
 	async getExecutionInfo(id: string): Promise<ExecutionResult> {
-		return this.execute(["executions", "info", id]);
+		return this.execute(["executions", "info", "-e", id]);
 	}
 
 	/**
 	 * 獲取執行輸出
 	 * @param id 執行 ID
-	 * @param node 節點名稱
-	 * @param step 步驟
+	 * @param tail 輸出行數
 	 * @returns 執行結果
 	 */
-	async getExecutionOutput(
-		id: string,
-		node?: string,
-		step?: string,
-	): Promise<ExecutionResult> {
-		const args = ["executions", "output", id];
-
-		if (node) {
-			args.push("--node", node);
-		}
-
-		if (step) {
-			args.push("--step", step);
-		}
-
-		return this.execute(args);
-	}
-
-	/**
-	 * 跟踪執行輸出
-	 * @param id 執行 ID
-	 * @returns 執行結果
-	 */
-	async followExecution(id: string): Promise<ExecutionResult> {
-		return this.execute(["executions", "follow", id]);
+	async getExecutionOutput(id: string, tail = 10): Promise<ExecutionResult> {
+		return this.execute(["executions", "follow", "-e", id, `-T=${tail}`]);
 	}
 
 	// 項目相關方法
@@ -226,7 +184,7 @@ export class RundeckCli {
 	 * @returns 執行結果
 	 */
 	async getProjectInfo(project: string): Promise<ExecutionResult> {
-		return this.execute(["projects", "info", "--project", project]);
+		return this.execute(["projects", "info", "-p", project]);
 	}
 
 	// 節點和系統相關方法
@@ -238,10 +196,10 @@ export class RundeckCli {
 	 * @returns 執行結果
 	 */
 	async listNodes(project: string, filter?: string): Promise<ExecutionResult> {
-		const args = ["nodes", "list", "--project", project];
+		const args = ["nodes", "list", `-p=${project}`];
 
 		if (filter) {
-			args.push("--filter", filter);
+			args.push("-F", filter);
 		}
 
 		return this.execute(args);
@@ -252,10 +210,8 @@ export class RundeckCli {
 	 * @param stats 是否包含統計信息
 	 * @returns 執行結果
 	 */
-	async getSystemInfo(stats = true): Promise<ExecutionResult> {
+	async getSystemInfo(): Promise<ExecutionResult> {
 		const args = ["system", "info"];
-
-		// 移除 --stats 選項，因為 Rundeck CLI 不支持
 
 		return this.execute(args);
 	}

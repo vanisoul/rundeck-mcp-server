@@ -84,10 +84,6 @@ class RundeckMcpServer {
 								type: "string",
 								description: "作業 ID",
 							},
-							format: {
-								type: "string",
-								description: "輸出格式（可選，默認為 json）",
-							},
 						},
 						required: ["id"],
 					},
@@ -114,20 +110,6 @@ class RundeckMcpServer {
 						required: ["id"],
 					},
 				},
-				{
-					name: "get_job_forecast",
-					description: "獲取作業的調度預測",
-					inputSchema: {
-						type: "object",
-						properties: {
-							id: {
-								type: "string",
-								description: "作業 ID",
-							},
-						},
-						required: ["id"],
-					},
-				},
 
 				// 執行相關工具
 				{
@@ -139,11 +121,6 @@ class RundeckMcpServer {
 							project: {
 								type: "string",
 								description: "項目名稱",
-							},
-							status: {
-								type: "string",
-								description:
-									"執行狀態（可選，如 running, succeeded, failed, aborted）",
 							},
 							max: {
 								type: "number",
@@ -177,27 +154,9 @@ class RundeckMcpServer {
 								type: "string",
 								description: "執行 ID",
 							},
-							node: {
-								type: "string",
-								description: "節點名稱（可選）",
-							},
-							step: {
-								type: "string",
-								description: "步驟（可選）",
-							},
-						},
-						required: ["id"],
-					},
-				},
-				{
-					name: "follow_execution",
-					description: "實時跟踪執行的輸出",
-					inputSchema: {
-						type: "object",
-						properties: {
-							id: {
-								type: "string",
-								description: "執行 ID",
+							tail: {
+								type: "number",
+								description: "輸出行數（可選）",
 							},
 						},
 						required: ["id"],
@@ -258,12 +217,7 @@ class RundeckMcpServer {
 					description: "獲取 Rundeck 系統信息",
 					inputSchema: {
 						type: "object",
-						properties: {
-							stats: {
-								type: "boolean",
-								description: "是否包含統計信息（可選，默認為 true）",
-							},
-						},
+						properties: {},
 						required: [],
 					},
 				},
@@ -287,8 +241,7 @@ class RundeckMcpServer {
 					case "get_job_info": {
 						this.validateParams(args, ["id"]);
 						const id = String(args.id);
-						const format = args.format ? String(args.format) : undefined;
-						const result = await this.rundeckCli.getJobInfo(id, format);
+						const result = await this.rundeckCli.getJobInfo(id);
 						return this.formatToolResponse(result);
 					}
 
@@ -301,24 +254,12 @@ class RundeckMcpServer {
 						return this.formatToolResponse(result);
 					}
 
-					case "get_job_forecast": {
-						this.validateParams(args, ["id"]);
-						const id = String(args.id);
-						const result = await this.rundeckCli.getJobForecast(id);
-						return this.formatToolResponse(result);
-					}
-
 					// 執行相關工具
 					case "list_executions": {
 						this.validateParams(args, ["project"]);
 						const project = String(args.project);
-						const status = args.status ? String(args.status) : undefined;
 						const max = args.max ? Number(args.max) : undefined;
-						const result = await this.rundeckCli.listExecutions(
-							project,
-							status,
-							max,
-						);
+						const result = await this.rundeckCli.listExecutions(project, max);
 						return this.formatToolResponse(result);
 					}
 
@@ -332,20 +273,8 @@ class RundeckMcpServer {
 					case "get_execution_output": {
 						this.validateParams(args, ["id"]);
 						const id = String(args.id);
-						const node = args.node ? String(args.node) : undefined;
-						const step = args.step ? String(args.step) : undefined;
-						const result = await this.rundeckCli.getExecutionOutput(
-							id,
-							node,
-							step,
-						);
-						return this.formatToolResponse(result);
-					}
-
-					case "follow_execution": {
-						this.validateParams(args, ["id"]);
-						const id = String(args.id);
-						const result = await this.rundeckCli.followExecution(id);
+						const tail = args.tail ? Number(args.tail) : undefined;
+						const result = await this.rundeckCli.getExecutionOutput(id, tail);
 						return this.formatToolResponse(result);
 					}
 
@@ -373,8 +302,7 @@ class RundeckMcpServer {
 					}
 
 					case "get_system_info": {
-						const stats = args.stats !== false;
-						const result = await this.rundeckCli.getSystemInfo(stats);
+						const result = await this.rundeckCli.getSystemInfo();
 						return this.formatToolResponse(result);
 					}
 
