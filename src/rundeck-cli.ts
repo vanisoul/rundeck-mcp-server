@@ -98,19 +98,18 @@ export class RundeckCli {
 	 * 執行作業
 	 * @param id 作業 ID
 	 * @param options 作業選項
-	 * @param follow 是否跟踪輸出
 	 * @returns 執行結果
 	 */
 	async runJob(
 		id: string,
 		options?: Record<string, string>,
-		follow = false,
+		// follow = false,
 	): Promise<ExecutionResult> {
 		const args = ["run", "-i", id];
 
-		if (follow) {
-			args.push("-f");
-		}
+		// if (follow) {
+		// 	args.push("-f");
+		// }
 
 		// 添加分隔符
 		args.push("--");

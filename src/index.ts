@@ -102,10 +102,6 @@ class RundeckMcpServer {
 								type: "object",
 								description: "作業選項（可選，JSON 格式）",
 							},
-							follow: {
-								type: "boolean",
-								description: "是否跟踪輸出（可選，默認為 false）",
-							},
 						},
 						required: ["id"],
 					},
@@ -249,8 +245,8 @@ class RundeckMcpServer {
 						this.validateParams(args, ["id"]);
 						const id = String(args.id);
 						const options = args.options as Record<string, string> | undefined;
-						const follow = args.follow === true;
-						const result = await this.rundeckCli.runJob(id, options, follow);
+						// const follow = args.follow === true;
+						const result = await this.rundeckCli.runJob(id, options);
 						return this.formatToolResponse(result);
 					}
 
