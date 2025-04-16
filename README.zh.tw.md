@@ -48,7 +48,7 @@ npm run build
       "command": "node",
       "args": ["/path/to/rundeck-mcp-server/build/index.js"],
       "env": {
-        "RUNDECK_CLI_PATH": "/path/to/rundeck-cli/bin/rd",
+        "RUNDECK_CLI_PATH": "/usr/bin/rd",
         "RUNDECK_BASE_URL": "http://your-rundeck-server:port/",
         "RUNDECK_API_TOKEN": "your-api-token"
       },
